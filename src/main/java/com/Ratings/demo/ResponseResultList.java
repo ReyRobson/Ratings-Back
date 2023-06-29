@@ -3,20 +3,20 @@ package com.Ratings.demo;
 import java.util.List;
 
 public class ResponseResultList {
-    Boolean adult;
-    String backdrop_path;
-    List<Integer> genre_ids;
-    int id;
-    String original_language;
-    String original_title;
-    String overview;
-    float popularity;
-    String poster_path;
-    String release_date;
-    String title;
-    Boolean video;
-    float vote_average;
-    float vote_count;
+    private Boolean adult;
+    private String backdrop_path;
+    private List<Integer> genre_ids;
+    private int id;
+    private String original_language;
+    private String original_title;
+    private String overview;
+    private float popularity;
+    private String poster_path;
+    private String release_date;
+    private String title;
+    private Boolean video;
+    private float vote_average;
+    private float vote_count;
 
     public int getId() {
         return id;

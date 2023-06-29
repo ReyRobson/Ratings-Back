@@ -26,25 +26,17 @@ public class Application {
     }
     @GetMapping("/search")
 	@ResponseBody
-    public JsonArray hello(@RequestParam String item){
-		
-    JsonArray array = new JsonArray();
+    public JsonArray returnMovie(@RequestParam String item){
 
     ArrayList<ResponseResult> movies = getMovie(item);
 
-    for(int i=0;i<movies.get(0).results.size();i++){
-      String jsonString = "{\"id\": \""+movies.get(0).results.get(i).id+"\" , " + "\"titulo\": \""+movies.get(0).results.get(i).title+"\" , "+ "\"data_lancamento\": \""+movies.get(0).results.get(i).release_date+"\"}";
-      System.out.println("json string"+jsonString);
-      JsonObject jsonObjectString = (JsonObject) JsonParser.parseString(jsonString);
-      System.out.println("json object" + jsonObjectString);
-      array.add(jsonObjectString);
-    }
+    JsonArray array = arrayToJson(movies);
 
     return array;
 	}
 
 
-  private ArrayList<ResponseResult> getMovie(String pesquisa){
+  public ArrayList<ResponseResult> getMovie(String pesquisa){
     ArrayList<ResponseResult> movies = new ArrayList<ResponseResult>();
     OkHttpClient client = new OkHttpClient();
 
@@ -60,18 +52,24 @@ public class Application {
       Gson gson = new Gson();
       ResponseResult responseResult = gson.fromJson(response.body().string(), ResponseResult.class);
       movies.add(responseResult);
-
-      for(int i=0;i<responseResult.results.size();i++){
-        System.out.println(responseResult.results.get(i).title);
-        System.out.println(responseResult.results.get(i).id);
-        System.out.println(i);
-      }
-
     } catch (IOException e) {
       e.printStackTrace();
     }
 
     return movies;
   }
+
+  public JsonArray arrayToJson(ArrayList<ResponseResult> movies){
+    JsonArray array = new JsonArray();
+
+    for(int i=0;i<movies.get(0).results.size();i++){
+      String jsonString = "{\"id\": \""+movies.get(0).results.get(i).getId()+"\" , " + "\"titulo\": \""+movies.get(0).results.get(i).getTitle()+"\" , "+ "\"data_lancamento\": \""+movies.get(0).results.get(i).getRelease_date()+"\"}";
+      JsonObject jsonObjectString = (JsonObject) JsonParser.parseString(jsonString);
+      System.out.println(jsonObjectString);
+      array.add(jsonObjectString);
+    }
+
+    return array;
+  } 
 
 }

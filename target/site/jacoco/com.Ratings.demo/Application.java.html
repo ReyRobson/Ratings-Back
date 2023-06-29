@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Application.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.Ratings.demo</a> &gt; <span class="el_source">Application.java</span></div><h1>Application.java</h1><pre class="source lang-java linenums">package com.Ratings.demo;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+@SpringBootApplication
+@RestController
+<span class="fc" id="L23">public class Application {</span>
+    public static void main(String[] args) {
+<span class="nc" id="L25">      SpringApplication.run(Application.class, args);</span>
+<span class="nc" id="L26">    }</span>
+    @GetMapping(&quot;/search&quot;)
+	@ResponseBody
+    public JsonArray returnMovie(@RequestParam String item){
+
+<span class="nc" id="L31">    ArrayList&lt;ResponseResult&gt; movies = getMovie(item);</span>
+
+<span class="nc" id="L33">    JsonArray array = arrayToJson(movies);</span>
+
+<span class="nc" id="L35">    return array;</span>
+	}
+
+
+  public ArrayList&lt;ResponseResult&gt; getMovie(String pesquisa){
+<span class="nc" id="L40">    ArrayList&lt;ResponseResult&gt; movies = new ArrayList&lt;ResponseResult&gt;();</span>
+<span class="nc" id="L41">    OkHttpClient client = new OkHttpClient();</span>
+
+<span class="nc" id="L43">    Request request = new Request.Builder()</span>
+<span class="nc" id="L44">    .url(&quot;https://api.themoviedb.org/3/search/movie?query=&quot;+ pesquisa + &quot;&amp;include_adult=false&amp;language=pt-BR&amp;page=1&quot;)</span>
+<span class="nc" id="L45">    .get()</span>
+<span class="nc" id="L46">    .addHeader(&quot;accept&quot;, &quot;application/json&quot;)</span>
+<span class="nc" id="L47">    .addHeader(&quot;Authorization&quot;, &quot;Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZDk3ZWEyNmVjMGM2ZDE3ZTdiNzAxMjk1YWM4MjBkZSIsInN1YiI6IjY0OWMyODZiNzdjMDFmMDE0ZTBhZjU5OCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.NPU42ssXBnnwPBivQO3RRQQFumkNTT65uQXaaKqnBrI&quot;)</span>
+<span class="nc" id="L48">    .build();</span>
+
+    try {
+<span class="nc" id="L51">      Response response = client.newCall(request).execute();</span>
+<span class="nc" id="L52">      Gson gson = new Gson();</span>
+<span class="nc" id="L53">      ResponseResult responseResult = gson.fromJson(response.body().string(), ResponseResult.class);</span>
+<span class="nc" id="L54">      movies.add(responseResult);</span>
+<span class="nc" id="L55">    } catch (IOException e) {</span>
+<span class="nc" id="L56">      e.printStackTrace();</span>
+    }
+
+<span class="nc" id="L59">    return movies;</span>
+  }
+
+  public JsonArray arrayToJson(ArrayList&lt;ResponseResult&gt; movies){
+<span class="fc" id="L63">    JsonArray array = new JsonArray();</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">    for(int i=0;i&lt;movies.get(0).results.size();i++){</span>
+<span class="fc" id="L66">      String jsonString = &quot;{\&quot;id\&quot;: \&quot;&quot;+movies.get(0).results.get(i).getId()+&quot;\&quot; , &quot; + &quot;\&quot;titulo\&quot;: \&quot;&quot;+movies.get(0).results.get(i).getTitle()+&quot;\&quot; , &quot;+ &quot;\&quot;data_lancamento\&quot;: \&quot;&quot;+movies.get(0).results.get(i).getRelease_date()+&quot;\&quot;}&quot;;</span>
+<span class="fc" id="L67">      JsonObject jsonObjectString = (JsonObject) JsonParser.parseString(jsonString);</span>
+<span class="fc" id="L68">      System.out.println(jsonObjectString);</span>
+<span class="fc" id="L69">      array.add(jsonObjectString);</span>
+    }
+
+<span class="fc" id="L72">    return array;</span>
+  } 
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
